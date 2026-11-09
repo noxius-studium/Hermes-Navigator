@@ -28,7 +28,7 @@ Navigator preferences live in plugin-scoped Hermes storage under schema version 
 
 ## Host overlay
 
-The version-pinned overlay introduces the smallest required seams:
+The version-pinned host overlay introduces the smallest required seams while Navigator itself stays in the normal on-disk runtime plugin door:
 
 - a shared core destination declaration used by both the stock sidebar and the SDK catalog;
 - `host.sidebarNav` read/subscribe access;

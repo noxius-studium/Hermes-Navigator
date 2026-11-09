@@ -1,0 +1,134 @@
+name: Propose Hermes catalog publication
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Published Hermes Navigator tag to propose (blank = latest release)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  propose:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.HERMES_CATALOG_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Require catalog pull-request token
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "${GH_TOKEN}" ]] || { echo "Add HERMES_CATALOG_TOKEN with access to Deadtrix21/hermes-agent and public pull requests." >&2; exit 1; }
+
+      - name: Resolve published release
+        id: release
+        env:
+          REQUESTED_TAG: ${{ inputs.release_tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${REQUESTED_TAG}"
+          if [[ -z "${TAG}" ]]; then
+            TAG="$(gh release list --repo noxius-studium/Hermes-Navigator --exclude-drafts --exclude-pre-releases --limit 1 --json tagName --jq '.[0].tagName')"
+          fi
+          gh release view "${TAG}" --repo noxius-studium/Hermes-Navigator >/dev/null
+          [[ "${TAG}" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]] || { echo "Release tag ${TAG} is not v<major>.<minor>.<patch>." >&2; exit 1; }
+          git fetch origin "refs/tags/${TAG}:refs/tags/${TAG}" --force
+          SHA="$(git rev-list -n 1 "${TAG}")"
+          {
+            echo "tag=${TAG}"
+            echo "version=${TAG#v}"
+            echo "sha=${SHA}"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Require the Navigator host SDK in upstream Hermes
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK="$(gh api repos/NousResearch/hermes-agent/contents/apps/desktop/src/sdk/index.ts -H 'Accept: application/vnd.github.raw+json')"
+          grep -q 'sidebarNav:' <<< "${SDK}"
+          grep -q 'NativeNavigatorSessions' <<< "${SDK}"
+          grep -q 'ProfileRail' <<< "${SDK}"
+          REQUIRES_HERMES="$(sed -n 's/^requires_hermes:[[:space:]]*"\(.*\)"/\1/p' plugin.yaml)"
+          [[ -n "${REQUIRES_HERMES}" && "${REQUIRES_HERMES}" != ">=0.23.0" ]] || {
+            echo "Bump requires_hermes to the first official Hermes release containing the Navigator SDK seam before catalog publication." >&2
+            exit 1
+          }
+
+      - name: Update catalog fork and open review PR
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          RELEASE_SHA: ${{ steps.release.outputs.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUIRES_HERMES="$(sed -n 's/^requires_hermes:[[:space:]]*"\(.*\)"/\1/p' plugin.yaml)"
+          BRANCH="catalog/hermes-navigator-v${VERSION}"
+          gh api --method POST repos/Deadtrix21/hermes-agent/merge-upstream -f branch=main >/dev/null
+          UPSTREAM_SHA="$(gh api repos/NousResearch/hermes-agent/git/ref/heads/main --jq '.object.sha')"
+          REF_ENDPOINT="repos/Deadtrix21/hermes-agent/git/refs/heads/${BRANCH}"
+          if gh api "${REF_ENDPOINT}" >/dev/null 2>&1; then
+            gh api --method PATCH "${REF_ENDPOINT}" -f sha="${UPSTREAM_SHA}" -F force=true >/dev/null
+          else
+            gh api --method POST repos/Deadtrix21/hermes-agent/git/refs -f ref="refs/heads/${BRANCH}" -f sha="${UPSTREAM_SHA}" >/dev/null
+          fi
+
+          ENTRY="${RUNNER_TEMP}/navigator.yaml"
+          cat > "${ENTRY}" <<EOF
+          name: navigator
+          repo: https://github.com/noxius-studium/Hermes-Navigator
+          sha: ${RELEASE_SHA}
+          title: Hermes Navigator
+          description: "Customizable Peek and Atlas navigation around Hermes Desktop's native Sessions browser. Auto-detects route-backed core and plugin destinations; stores only local presentation preferences; makes no network requests."
+          maintainer: Deadtrix21
+          tier: community
+          category: desktop
+          requires_hermes: "${REQUIRES_HERMES}"
+          docs_url: https://github.com/noxius-studium/Hermes-Navigator/blob/${RELEASE_SHA}/README.md
+          version: "${VERSION}"
+          image: https://raw.githubusercontent.com/noxius-studium/Hermes-Navigator/${RELEASE_SHA}/assets/hero.png
+          readme: true
+          platforms: []
+          known_issues:
+            - Requires the Navigator host SDK exports to be present in the installed Hermes Desktop release.
+          capabilities:
+            provides_tools: []
+            provides_hooks: []
+            provides_middleware: []
+            requires_env: []
+          EOF
+
+          FILE_ENDPOINT="repos/Deadtrix21/hermes-agent/contents/plugin-catalog/navigator.yaml"
+          FILE_SHA="$(gh api --method GET "${FILE_ENDPOINT}" -f ref="${BRANCH}" --jq '.sha' 2>/dev/null || true)"
+          CONTENT="$(base64 -w 0 "${ENTRY}")"
+          ARGS=(--method PUT "${FILE_ENDPOINT}" -f message="chore(plugin-catalog): publish navigator ${VERSION}" -f content="${CONTENT}" -f branch="${BRANCH}")
+          [[ -z "${FILE_SHA}" ]] || ARGS+=(-f sha="${FILE_SHA}")
+          gh api "${ARGS[@]}" >/dev/null
+
+          BODY_FILE="${RUNNER_TEMP}/navigator-catalog-pr.md"
+          printf '%s\n' \
+            '## Summary' \
+            "- publish \`navigator\` ${VERSION} at exact source SHA \`${RELEASE_SHA}\`" \
+            '- pin README and hero image URLs to the same reviewed commit' \
+            '- require the upstream Navigator SDK seam before publication' \
+            '' \
+            '## Release evidence' \
+            "- Release: https://github.com/noxius-studium/Hermes-Navigator/releases/tag/${RELEASE_TAG}" \
+            '' \
+            'Nous maintainer review and catalog CI remain the publication gate.' > "${BODY_FILE}"
+
+          EXISTING="$(gh pr list --repo NousResearch/hermes-agent --state open --head "Deadtrix21:${BRANCH}" --json url --jq '.[0].url // empty')"
+          if [[ -n "${EXISTING}" ]]; then
+            gh pr edit "${EXISTING}" --repo NousResearch/hermes-agent --title "chore(plugin-catalog): publish navigator ${VERSION}" --body-file "${BODY_FILE}"
+          else
+            gh pr create --repo NousResearch/hermes-agent --base main --head "Deadtrix21:${BRANCH}" --title "chore(plugin-catalog): publish navigator ${VERSION}" --body-file "${BODY_FILE}"
+          fi

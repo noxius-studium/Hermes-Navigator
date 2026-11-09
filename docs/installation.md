@@ -1,6 +1,6 @@
 # Installation
 
-Hermes Navigator currently installs as a bundled Desktop plugin because it needs three host SDK seams that Hermes 0.23.0 does not expose to runtime plugins yet.
+Hermes Navigator is a runtime Desktop plugin backed by three small host SDK seams that Hermes 0.23.0 does not expose yet. The guarded installer applies those seams to the pinned Hermes source checkout and installs `desktop/plugin.js` under `$HERMES_HOME/desktop-plugins/navigator/`.
 
 ## Requirements
 
@@ -22,13 +22,13 @@ npm run typecheck
 npm run build
 ```
 
-Restart Hermes Desktop after the build. Navigator is bundled and enabled by default. Open **Settings → Plugins → Navigator → Navigator Studio** to choose Peek or Atlas and customize destinations.
+Restart Hermes Desktop after the build. Navigator loads from the normal on-disk plugin door and is enabled by default. Open **Settings → Plugins → Navigator → Navigator Studio** to choose Peek or Atlas and customize destinations.
 
 The installer checks both the Hermes commit and working-tree cleanliness before copying anything. `--force` exists for maintainers who have reviewed the overlay against another revision; it is not a compatibility promise.
 
 ## Uninstall
 
-Because the current release is a source overlay, restore the Hermes checkout rather than deleting only the plugin folder:
+Restore the Hermes checkout and remove the runtime plugin folder:
 
 ```sh
 cd C:/Users/<you>/HermesHome/hermes-agent
@@ -37,6 +37,7 @@ git clean -fd apps/desktop/src/plugins/navigator \
   apps/desktop/src/app/chat/sidebar/sidebar-core-destinations.ts \
   apps/desktop/src/app/chat/sidebar/sidebar-destinations.ts \
   apps/desktop/src/app/chat/sidebar/sidebar-destinations.test.ts
+rm -rf C:/Users/<you>/HermesHome/desktop-plugins/navigator
 cd apps/desktop
 npm run build
 ```

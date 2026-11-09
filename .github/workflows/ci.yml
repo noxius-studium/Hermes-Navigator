@@ -27,6 +27,7 @@ jobs:
         run: npm run verify:desktop
       - name: Build deterministic release twice
         run: |
-          node scripts/package.mjs --output dist/hermes-navigator-0.1.0-a.zip
-          node scripts/package.mjs --output dist/hermes-navigator-0.1.0-b.zip
-          cmp dist/hermes-navigator-0.1.0-a.zip dist/hermes-navigator-0.1.0-b.zip
+          VERSION="$(node -p "require('./package.json').version")"
+          node scripts/package.mjs --output "dist/hermes-navigator-${VERSION}-a.zip"
+          node scripts/package.mjs --output "dist/hermes-navigator-${VERSION}-b.zip"
+          cmp "dist/hermes-navigator-${VERSION}-a.zip" "dist/hermes-navigator-${VERSION}-b.zip"

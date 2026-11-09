@@ -11,6 +11,7 @@ const args = process.argv.slice(2)
 const force = args.includes('--force')
 const positional = args.filter(argument => argument !== '--force')
 const hermesRoot = path.resolve(positional[0] || defaultHermesRoot)
+const hermesHome = path.resolve(process.env.HERMES_HOME || path.dirname(hermesRoot))
 
 if (!positional[0] && !defaultHermesRoot) {
   throw new Error('Pass the Hermes Agent source checkout path, or set HERMES_HOME.')
@@ -39,7 +40,10 @@ async function copyTree(source, destination) {
 }
 
 await copyTree(path.join(projectRoot, 'host-overlay'), hermesRoot)
-await copyTree(path.join(projectRoot, 'desktop', 'src'), path.join(hermesRoot, 'apps', 'desktop', 'src', 'plugins', 'navigator'))
+const runtimePluginDir = path.join(hermesHome, 'desktop-plugins', 'navigator')
+await mkdir(runtimePluginDir, { recursive: true })
+await cp(path.join(projectRoot, 'desktop', 'plugin.js'), path.join(runtimePluginDir, 'plugin.js'), { force: true })
 
-console.log(`Installed Hermes Navigator sources into ${hermesRoot}`)
-console.log('Next: cd apps/desktop && npm run typecheck && npm run build')
+console.log(`Installed the Navigator host seam into ${hermesRoot}`)
+console.log(`Installed the runtime plugin into ${runtimePluginDir}`)
+console.log('Next: rebuild/restart Hermes Desktop so the host seam is active.')

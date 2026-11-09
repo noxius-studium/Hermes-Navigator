@@ -33,7 +33,7 @@ npm run test
 npm run build:check
 ```
 
-Install into the pinned Hermes source checkout:
+Install the host seam and runtime plugin into the pinned Hermes source checkout/home:
 
 ```sh
 node scripts/install-host.mjs C:/Users/<you>/HermesHome/hermes-agent
