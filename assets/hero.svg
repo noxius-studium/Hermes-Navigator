@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 510" width="1000" height="510" role="img" aria-labelledby="title desc">
+<title id="title">Hermes Navigator — native sessions, flexible routes</title>
+<desc id="desc">Core and plugin destinations enter one catalog, pass through local Navigator preferences, and appear as either a compact Peek bar or customizable Atlas categories beside Hermes's native Sessions browser.</desc>
+<style>.flow{stroke-dasharray:12 16;animation:flow 5s linear infinite}.pulse{animation:pulse 3s ease-in-out infinite}@keyframes flow{to{stroke-dashoffset:-140}}@keyframes pulse{50%{opacity:.4}}@media(prefers-reduced-motion:reduce){.flow,.pulse{animation:none}}</style>
+<defs><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#26333b" stroke-opacity=".35"/></pattern></defs>
+<rect width="1000" height="510" rx="12" fill="#0b1218"/>
+<rect x="1" y="1" width="998" height="508" rx="12" fill="url(#grid)" stroke="#2c3b43"/>
+<text x="36" y="38" font-family="Consolas,monospace" font-size="14" fill="#3ad6c6" letter-spacing="1.2">03 / HERMES NAVIGATOR</text>
+<text x="730" y="38" font-family="Consolas,monospace" font-size="14" fill="#ffb347" letter-spacing="1.2">HERMES DESKTOP</text>
+<text x="36" y="85" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" fill="#f4f0e6">One workspace. Every route.</text>
+<text x="36" y="117" font-family="Arial,Helvetica,sans-serif" font-size="19" fill="#aab8be">Keep Sessions native. Arrange the rest around the way you work.</text>
+<text x="36" y="165" font-family="Consolas,monospace" font-size="14" fill="#3ad6c6" letter-spacing="1.2">DISCOVERY</text>
+<text x="365" y="165" font-family="Consolas,monospace" font-size="14" fill="#3ad6c6" letter-spacing="1.2">NAVIGATOR STUDIO</text>
+<text x="720" y="165" font-family="Consolas,monospace" font-size="14" fill="#3ad6c6" letter-spacing="1.2">LAYOUT</text>
+<rect x="36" y="184" width="270" height="74" rx="8" fill="#121d24" stroke="#34434e"/>
+<text x="53" y="215" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="600" fill="#f4f0e6">Hermes core routes</text>
+<text x="53" y="240" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#aab8be">Messaging · jobs · artifacts</text>
+<rect x="36" y="278" width="270" height="74" rx="8" fill="#121d24" stroke="#34434e"/>
+<text x="53" y="309" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="600" fill="#f4f0e6">Plugin destinations</text>
+<text x="53" y="334" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#aab8be">Detected as plugins register</text>
+<path d="M306 221h35v72h24M306 315h35v-22h24" fill="none" stroke="#3ad6c6" stroke-width="2" class="flow"/>
+<rect x="365" y="198" width="290" height="190" rx="8" fill="#121d24" stroke="#3ad6c6"/>
+<text x="388" y="232" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#f4f0e6">Navigator</text>
+<text x="388" y="263" font-family="Arial,Helvetica,sans-serif" font-size="18" fill="#d4dfdf">One live destination catalog</text>
+<path d="M388 281H632" fill="none" stroke="#34434e" stroke-width="2"/>
+<text x="388" y="310" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#aab8be">Choose up to 6 Peek shortcuts</text>
+<text x="388" y="338" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#aab8be">Group routes into Atlas lanes</text>
+<text x="388" y="366" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#aab8be">Rename · reorder · hide</text>
+<path d="M655 245h39v-24h26M655 337h39v10h26" fill="none" stroke="#3ad6c6" stroke-width="2" class="flow"/>
+<rect x="720" y="184" width="244" height="108" rx="8" fill="#121d24" stroke="#34434e"/>
+<text x="742" y="216" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="600" fill="#f4f0e6">Peek</text>
+<text x="742" y="244" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#aab8be">Sessions + shortcut bar</text>
+<text x="742" y="270" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#ffb347">Full-height destination drawer</text>
+<rect x="720" y="314" width="244" height="108" rx="8" fill="#121d24" stroke="#34434e"/>
+<text x="742" y="346" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="600" fill="#f4f0e6">Atlas</text>
+<text x="742" y="374" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#aab8be">Sessions + category lanes</text>
+<text x="742" y="400" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#ffb347">Custom groups, native routes</text>
+<circle class="pulse" cx="939" cy="159" r="5" fill="#3ad6c6"/>
+<path d="M36 453H964" fill="none" stroke="#34434e" stroke-width="2"/>
+<text x="36" y="482" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#aab8be">Native Sessions stays native. Navigator only changes how you reach everything else.</text>
+</svg>

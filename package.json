@@ -1,0 +1,19 @@
+{
+  "name": "hermes-navigator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Customizable Peek and Atlas navigation for Hermes Desktop.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:check": "node scripts/build.mjs --check",
+    "test": "vitest run desktop/src/domain.test.ts",
+    "verify:desktop": "node scripts/verify-desktop.mjs desktop/plugin.js",
+    "package": "node scripts/package.mjs --output dist/hermes-navigator-0.1.0.zip",
+    "verify": "npm run test && npm run build:check && npm run verify:desktop"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "vitest": "4.1.12"
+  }
+}

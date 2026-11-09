@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Test preference projection
+        run: npm test
+      - name: Verify generated Desktop bundle
+        run: npm run build:check
+      - name: Verify Desktop surface
+        run: npm run verify:desktop
+      - name: Build deterministic release twice
+        run: |
+          node scripts/package.mjs --output dist/hermes-navigator-0.1.0-a.zip
+          node scripts/package.mjs --output dist/hermes-navigator-0.1.0-b.zip
+          cmp dist/hermes-navigator-0.1.0-a.zip dist/hermes-navigator-0.1.0-b.zip
