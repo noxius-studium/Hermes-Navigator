@@ -13,24 +13,6 @@ import { hydrateNavigatorPreferences, invalidateNavigatorData, navigatorDestinat
 
 const destinationCommandId = (id: string) => `destination:${id}`
 
-// These are the established first-class pages in this Desktop setup. Runtime
-// plugins still auto-register through host.sidebarNav; the fallback rows keep
-// Navigator complete while an opt-in desktop half is still loading or its
-// enable decision belongs to another Electron user-data profile.
-const REQUIRED_DESTINATIONS: readonly SidebarDestination[] = Object.freeze([
-  Object.freeze({ id: 'fluid-music:media-nav', source: 'plugin:fluid-music', path: '/media', label: 'Media', codicon: 'music' }),
-  Object.freeze({ id: 'hermes-security:nav', source: 'plugin:hermes-security', path: '/security', label: 'Security', codicon: 'shield' }),
-  Object.freeze({ id: 'hyatlas:nav', source: 'plugin:hyatlas', path: '/hyatlas', label: 'HyAtlas Memory', codicon: 'database' }),
-  Object.freeze({ id: 'composer-enhancements:sidebar-nav', source: 'plugin:composer-enhancements', path: '/enchanted-composer', label: 'Enchanted Composer', codicon: 'sparkle' }),
-  Object.freeze({ id: 'kanban:nav', source: 'plugin:kanban', path: '/kanban', label: 'Kanban', codicon: 'project' })
-])
-
-function completeDestinations(destinations: readonly SidebarDestination[]): readonly SidebarDestination[] {
-  const paths = new Set(destinations.map(destination => destination.path))
-
-  return Object.freeze([...destinations, ...REQUIRED_DESTINATIONS.filter(destination => !paths.has(destination.path))])
-}
-
 const plugin: HermesPlugin = {
   id: 'navigator',
   name: 'Navigator',
@@ -41,11 +23,8 @@ const plugin: HermesPlugin = {
     ctx.i18n.register({ en: { open: 'Open Navigator', studio: 'Open Navigator Studio' } })
     hydrateNavigatorPreferences(ctx.storage)
 
-    const applyDestinations = (destinations: readonly SidebarDestination[]) =>
-      navigatorDestinations.set(completeDestinations(destinations))
-
-    applyDestinations(host.sidebarNav.list())
-    ctx.onDispose(host.sidebarNav.subscribe(applyDestinations))
+    navigatorDestinations.set(host.sidebarNav.list())
+    ctx.onDispose(host.sidebarNav.subscribe(destinations => navigatorDestinations.set(destinations)))
     ctx.onEvent('sessions.changed', () => invalidateNavigatorData('sessions.changed'))
     ctx.onEvent('projects.changed', () => invalidateNavigatorData('projects.changed'))
 
@@ -92,8 +71,8 @@ const plugin: HermesPlugin = {
       })))
     }
 
-    registerDestinationCommands(completeDestinations(host.sidebarNav.list()))
-    ctx.onDispose(host.sidebarNav.subscribe(destinations => registerDestinationCommands(completeDestinations(destinations))))
+    registerDestinationCommands(host.sidebarNav.list())
+    ctx.onDispose(host.sidebarNav.subscribe(registerDestinationCommands))
     ctx.onDispose(() => removeDestinationCommands?.())
 
     // Data is requested only by mounted surfaces; event invalidation keeps their shared cache fresh.

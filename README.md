@@ -1,6 +1,6 @@
 # Hermes Navigator
 
-![Hermes Navigator architecture](assets/hero.svg)
+[![Hermes Navigator architecture](assets/hero.png)](assets/hero.svg)
 
 Hermes Navigator is an additive navigation workspace for Hermes Desktop. It keeps the native Sessions and Projects browser intact, auto-discovers route-backed core and plugin destinations, and presents them through two configurable layouts.
 

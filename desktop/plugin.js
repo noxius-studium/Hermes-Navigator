@@ -313,7 +313,7 @@ function PeekDrawerLayout() {
   const [drawerOpen, setDrawerOpen] = useState2(false);
   const catalog = useMemo2(() => projectDestinations(source, preferences), [preferences, source]);
   const configured = catalog.visible.filter((item) => item.favorite);
-  const favourites = configured.length ? configured : ["/messaging", "/hyatlas", "/kanban", "/media", "/security", "/enchanted-composer"].map((path) => catalog.all.find((item) => item.path === path)).filter(Boolean);
+  const favourites = configured.length ? configured : catalog.visible.slice(0, 6);
   return /* @__PURE__ */ jsxs3("div", { className: "flex h-full min-h-0 flex-col overflow-hidden", children: [
     /* @__PURE__ */ jsxs3("header", { className: "shrink-0 px-3 pb-2 pt-2", children: [
       /* @__PURE__ */ jsxs3("div", { className: "flex h-9 items-center", children: [
@@ -547,17 +547,6 @@ function NavigatorStudio() {
 // desktop/src/plugin.tsx
 import { jsx as jsx6 } from "react/jsx-runtime";
 var destinationCommandId = (id) => `destination:${id}`;
-var REQUIRED_DESTINATIONS = Object.freeze([
-  Object.freeze({ id: "fluid-music:media-nav", source: "plugin:fluid-music", path: "/media", label: "Media", codicon: "music" }),
-  Object.freeze({ id: "hermes-security:nav", source: "plugin:hermes-security", path: "/security", label: "Security", codicon: "shield" }),
-  Object.freeze({ id: "hyatlas:nav", source: "plugin:hyatlas", path: "/hyatlas", label: "HyAtlas Memory", codicon: "database" }),
-  Object.freeze({ id: "composer-enhancements:sidebar-nav", source: "plugin:composer-enhancements", path: "/enchanted-composer", label: "Enchanted Composer", codicon: "sparkle" }),
-  Object.freeze({ id: "kanban:nav", source: "plugin:kanban", path: "/kanban", label: "Kanban", codicon: "project" })
-]);
-function completeDestinations(destinations) {
-  const paths = new Set(destinations.map((destination) => destination.path));
-  return Object.freeze([...destinations, ...REQUIRED_DESTINATIONS.filter((destination) => !paths.has(destination.path))]);
-}
 var plugin = {
   id: "navigator",
   name: "Navigator",
@@ -566,9 +555,8 @@ var plugin = {
   register(ctx) {
     ctx.i18n.register({ en: { open: "Open Navigator", studio: "Open Navigator Studio" } });
     hydrateNavigatorPreferences(ctx.storage);
-    const applyDestinations = (destinations) => navigatorDestinations.set(completeDestinations(destinations));
-    applyDestinations(host5.sidebarNav.list());
-    ctx.onDispose(host5.sidebarNav.subscribe(applyDestinations));
+    navigatorDestinations.set(host5.sidebarNav.list());
+    ctx.onDispose(host5.sidebarNav.subscribe((destinations) => navigatorDestinations.set(destinations)));
     ctx.onEvent("sessions.changed", () => invalidateNavigatorData("sessions.changed"));
     ctx.onEvent("projects.changed", () => invalidateNavigatorData("projects.changed"));
     ctx.register({
@@ -609,8 +597,8 @@ var plugin = {
         }
       })));
     };
-    registerDestinationCommands(completeDestinations(host5.sidebarNav.list()));
-    ctx.onDispose(host5.sidebarNav.subscribe((destinations) => registerDestinationCommands(completeDestinations(destinations))));
+    registerDestinationCommands(host5.sidebarNav.list());
+    ctx.onDispose(host5.sidebarNav.subscribe(registerDestinationCommands));
     ctx.onDispose(() => removeDestinationCommands?.());
   }
 };

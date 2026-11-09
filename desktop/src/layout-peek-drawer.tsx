@@ -23,9 +23,7 @@ export function PeekDrawerLayout() {
 
   const favourites = configured.length
     ? configured
-    : ['/messaging', '/hyatlas', '/kanban', '/media', '/security', '/enchanted-composer']
-        .map(path => catalog.all.find(item => item.path === path))
-        .filter(Boolean)
+    : catalog.visible.slice(0, 6)
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
