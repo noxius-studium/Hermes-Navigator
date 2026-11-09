@@ -1,5 +1,5 @@
 name: navigator
-version: 0.1.0
+version: 0.1.1
 description: "Customizable Peek and Atlas navigation built around Hermes Desktop's native Sessions browser."
 author: "noxius-studium"
 requires_hermes: ">=0.23.0"
