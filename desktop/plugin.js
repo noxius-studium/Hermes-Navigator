@@ -286,6 +286,7 @@ function ModeAtlasLayout() {
     /* @__PURE__ */ jsxs2("div", { className: "flex min-w-0 flex-1 flex-col overflow-hidden", children: [
       /* @__PURE__ */ jsxs2("header", { className: "flex h-11 shrink-0 items-center px-3", children: [
         /* @__PURE__ */ jsx2("span", { className: "flex-1 text-xs font-semibold uppercase tracking-wide text-(--ui-text-secondary)", children: current.label }),
+        /* @__PURE__ */ jsx2(Button, { "aria-label": "New session", onClick: () => host3.newChat(), size: "icon", variant: "ghost", children: /* @__PURE__ */ jsx2(Codicon2, { name: "add" }) }),
         /* @__PURE__ */ jsx2(Button, { "aria-label": "Navigator Studio", onClick: () => host3.navigate(pluginSettingsHref("navigator", "studio")), size: "icon", variant: "ghost", children: /* @__PURE__ */ jsx2(Codicon2, { name: "settings-gear" }) })
       ] }),
       /* @__PURE__ */ jsx2("div", { className: "min-h-0 flex-1 overflow-hidden", children: lane === "sessions" ? /* @__PURE__ */ jsx2(NativeNavigatorSessions, {}) : /* @__PURE__ */ jsx2(FadeScroll, { className: "scrollbar-fade h-full", maxHeight: "none", children: /* @__PURE__ */ jsx2(DestinationList, { destinations }) }) }),
@@ -318,6 +319,7 @@ function PeekDrawerLayout() {
     /* @__PURE__ */ jsxs3("header", { className: "shrink-0 px-3 pb-2 pt-2", children: [
       /* @__PURE__ */ jsxs3("div", { className: "flex h-9 items-center", children: [
         /* @__PURE__ */ jsx3("span", { className: "flex-1 text-xs font-semibold uppercase tracking-wide text-(--ui-text-secondary)", children: "Workspace" }),
+        /* @__PURE__ */ jsx3(Button2, { "aria-label": "New session", onClick: () => host4.newChat(), size: "icon", variant: "ghost", children: /* @__PURE__ */ jsx3(Codicon3, { name: "add" }) }),
         /* @__PURE__ */ jsx3(Button2, { "aria-label": "Navigator Studio", onClick: () => host4.navigate(pluginSettingsHref2("navigator", "studio")), size: "icon", variant: "ghost", children: /* @__PURE__ */ jsx3(Codicon3, { name: "settings-gear" }) })
       ] }),
       /* @__PURE__ */ jsxs3("button", { className: "flex w-full items-center gap-2 rounded-md bg-(--ui-bg-quaternary) px-3 py-2 text-left text-xs text-(--ui-text-secondary) hover:bg-(--chrome-action-hover)", onClick: () => setDrawerOpen((value) => !value), type: "button", children: [

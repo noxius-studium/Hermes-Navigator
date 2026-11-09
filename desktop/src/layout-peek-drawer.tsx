@@ -30,6 +30,7 @@ export function PeekDrawerLayout() {
       <header className="shrink-0 px-3 pb-2 pt-2">
         <div className="flex h-9 items-center">
           <span className="flex-1 text-xs font-semibold uppercase tracking-wide text-(--ui-text-secondary)">Workspace</span>
+          <Button aria-label="New session" onClick={() => host.newChat()} size="icon" variant="ghost"><Codicon name="add" /></Button>
           <Button aria-label="Navigator Studio" onClick={() => host.navigate(pluginSettingsHref('navigator', 'studio'))} size="icon" variant="ghost"><Codicon name="settings-gear" /></Button>
         </div>
         <button className="flex w-full items-center gap-2 rounded-md bg-(--ui-bg-quaternary) px-3 py-2 text-left text-xs text-(--ui-text-secondary) hover:bg-(--chrome-action-hover)" onClick={() => setDrawerOpen(value => !value)} type="button">
