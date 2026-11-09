@@ -129,6 +129,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git rev-parse --verify --quiet "refs/tags/${TAG}" >/dev/null; then
             TAG_SHA="$(git rev-list -n 1 "${TAG}")"
             [[ "${TAG_SHA}" == "${COMMIT_SHA}" ]] || { echo "${TAG} points to ${TAG_SHA}, not ${COMMIT_SHA}." >&2; exit 1; }
